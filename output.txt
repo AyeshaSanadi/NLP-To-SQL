@@ -1,0 +1,124 @@
+ python main.py
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards: 100%|################################################################| 2/2 [00:01<00:00,  1.03it/s]
+Enter your NLP queston (press Ctrl+C to exit):
+
+nlp:Which executions belong to context id `2`
+The following generation flags are not valid and may be ignored: ['tempe                                                                                rature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more d                                                                                etails.
+sql: SELECT e.*
+FROM execution e
+JOIN context c ON e.context_id = c.id
+WHERE c.id = 2;
+
+nlp:display all the models that were created during the training stage?
+sql: SELECT a.*
+FROM artifact a
+JOIN artifactproperty ap ON a.id = ap.artifact_id
+WHERE ap.name = 'Pipeline_Stage'
+  AND ap.string_value = 'Training';
+
+nlp:Can you show me all models where the validation loss dropped below 1                                                                                .0?
+sql: SELECT a.*
+FROM artifact a
+JOIN artifactproperty ap ON a.id = ap.artifact_id
+WHERE ap.name = 'validation_loss'
+  AND ap.double_value < 1.0;
+
+nlp:What’s the accuracy of the very first model that was trained?
+sql: SELECT m.accuracy
+FROM mlmdmetrics m
+ORDER BY m.create_time_since_epoch ASC
+LIMIT 1;
+
+nlp:list all the models with accuracy between 0.2 and 0.4?
+sql: SELECT a.*
+FROM artifact a
+JOIN artifactproperty ap ON a.id = ap.artifact_id
+WHERE ap.name = 'model_accuracy'
+  AND ap.double_value BETWEEN 0.2 AND 0.4;
+
+nlp:What’s the earliest dataset recorded here?
+sql: SELECT MIN(create_time_since_epoch) FROM artifact;
+
+nlp:Which models specify `model_framework` as Pytorch?
+sql: SELECT a.*
+FROM artifact a
+JOIN artifactproperty ap ON a.id = ap.artifact_id
+WHERE ap.name = 'model_framework'
+  AND ap.string_value = 'PyTorch';
+
+nlp:display all execution whose test percent is 0.9
+sql: SELECT e.* FROM execution e JOIN executionproperty ep ON e.id = ep.                                                                                execution_id WHERE ep.name = 'test_percent' AND ep.double_value = 0.9;
+
+nlp:What was the lowest validation loss recorded, and which model does i                                                                                t belong to?
+sql: SELECT m.model_name, MIN(v.loss) as min_loss
+FROM models m
+JOIN validation v ON m.id = v.model_id
+GROUP BY m.model_name;
+
+nlp:Get artifacts created after timestamp 1757410442820.
+sql: SELECT * FROM artifact WHERE create_time_since_epoch > 175741044282                                                                                0;
+
+nlp:display artifacts whoes original_create_time_since_epoch is 17243760                                                                                71902
+sql: SELECT * FROM artifact WHERE original_create_time_since_epoch = 172                                                                                4376071902;
+
+nlp:Which model entries are associated with commit 40bcdcb75a2e86ad824e3                                                                                032e516a4b3?
+sql: SELECT a.*
+FROM artifact a
+JOIN artifactproperty ap ON a.id = ap.artifact_id
+WHERE ap.name = 'Commit'
+  AND ap.string_value = '40bcdcb75a2e86ad824e3032e516a4b3';
+
+nlp:Display dataset which has execution type name contains /Train
+sql: SELECT a.*
+FROM artifact a
+JOIN execution e ON a.execution_id = e.id
+JOIN executionproperty ep ON e.id = ep.execution_id
+WHERE ep.name = 'Execution_type_name'
+  AND ep.string_value LIKE '%/Train%';
+
+nlp:fetch executions that have a property named pythonenv
+sql: SELECT * FROM executionproperty WHERE name = 'pythonenv';
+
+nlp:Display artifacts where artifact type is label
+sql: SELECT * FROM artifact WHERE type_id = (SELECT id FROM type WHERE n                                                                                ame = 'Label');
+
+
+nlp:Fetch executions that have any of the three properties (training_fil                                                                                es, ngrams, and split)
+sql: SELECT e.*
+FROM execution e
+JOIN executionproperty ep
+     ON e.id = ep.execution_id
+WHERE ep.name IN ('training_files', 'ngrams', 'split');
+
+nlp:display all executions where maximum features are used above 1k
+sql: SELECT e.*
+FROM execution e
+JOIN executionproperty ep
+     ON e.id = ep.execution_id
+WHERE ep.name = 'max_features'
+  AND ep.int_value > 1000;
+
+nlp:display all artifacts where md5 keyword is present inside url.
+sql: SELECT a.*
+FROM artifact a
+JOIN artifactproperty ap ON a.id = ap.artifact_id
+WHERE ap.name = 'url'
+  AND ap.string_value LIKE '%md5%';
+
+nlp:display artifacts whoes average precision is above and equal to .5
+sql: SELECT a.*
+FROM artifact a
+JOIN artifactproperty ap ON a.id = ap.artifact_id
+WHERE ap.name = 'average_precision'
+GROUP BY a.id
+HAVING AVG(ap.double_value) >= 0.5;
+
+nlp:Display all the artifacts that contains less than 2 custom propertie                                                                                s
+sql: SELECT a.*
+FROM artifact a
+JOIN artifactproperty ap ON a.id = ap.artifact_id
+GROUP BY a.id
+HAVING COUNT(DISTINCT ap.is_custom_property) < 2;
+
+

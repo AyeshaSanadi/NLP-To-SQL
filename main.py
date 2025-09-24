@@ -1,0 +1,587 @@
+input_schema = """
+{
+    "tables":[
+        {
+  "table": "artifact",
+  "schema": {
+    "id": { "type": "integer", "nullable": false, "default": "nextval('artifact_id_seq'::regclass)" },
+    "type_id": { "type": "integer", "nullable": false },
+    "uri": { "type": "text", "nullable": true },
+    "state": { "type": "integer", "nullable": true },
+    "name": { "type": "varchar(255)", "nullable": true },
+    "external_id": { "type": "varchar(255)", "nullable": true },
+    "create_time_since_epoch": { "type": "bigint", "nullable": false, "default": 0 },
+    "last_update_time_since_epoch": { "type": "bigint", "nullable": false, "default": 0 }
+  },
+  "indexes": [
+    { "name": "artifact_pkey", "type": "PRIMARY KEY", "columns": ["id"] },
+    { "name": "artifact_external_id_key", "type": "UNIQUE", "columns": ["external_id"] },
+    { "name": "idx_artifact_create_time_since_epoch", "type": "btree", "columns": ["create_time_since_epoch"] },
+    { "name": "idx_artifact_external_id", "type": "btree", "columns": ["external_id"] },
+    { "name": "idx_artifact_last_update_time_since_epoch", "type": "btree", "columns": ["last_update_time_since_epoch"] },
+    { "name": "idx_artifact_uri", "type": "btree", "columns": ["uri"] },
+    { "name": "uniqueartifacttypename", "type": "UNIQUE", "columns": ["type_id", "name"] }
+  ],
+  "records": [
+    { "id": 1, "type_id": 13, "uri": "d2d07ee0686acedbb95ab82e7422576d.dir", "state": null, "name": "./data/shot_netcdfs:d2d07ee0686acedbb95ab82e7422576d.dir", "external_id": null, "create_time_since_epoch": 1757410442817, "last_update_time_since_epoch": 1757410442817 },
+    { "id": 2, "type_id": 14, "uri": "416863bdc943f47ab36d99e4d00f6b7c", "state": null, "name": "cmf_artifacts/9a2bab50-617d-11ef-9f7e-a4bf0103caf6/dataslice/training_0.9:416863bdc943f47ab36d99e4d00f6b7c", "external_id": null, "create_time_since_epoch": 1757410442820, "last_update_time_since_epoch": 1757410442820 },
+    { "id": 3, "type_id": 14, "uri": "c1b1c3f452229e2469b0916f8f10c705", "state": null, "name": "cmf_artifacts/cfebe9b6-60ed-11ef-9f7e-a4bf0103caf6/dataslice/testing_0.1:c1b1c3f452229e2469b0916f8f10c705", "external_id": null, "create_time_since_epoch": 1757410442822, "last_update_time_since_epoch": 1757410442822 },
+    { "id": 4, "type_id": 15, "uri": "82cd1b5fe442733f99347c0a0db95c31", "state": null, "name": "./data/models/experiment2/cnn_lh_predictor_0.9_acc_0.3721683530814438.pt:82cd1b5fe442733f99347c0a0db95c31:1", "external_id": null, "create_time_since_epoch": 1757410442825, "last_update_time_since_epoch": 1757410442825 },
+    { "id": 5, "type_id": 16, "uri": "1d99b7f4-6190-11ef-9f7e-a4bf0103caf6", "state": null, "name": "Final_Metrics:1d99b7f4-6190-11ef-9f7e-a4bf0103caf6:1", "external_id": null, "create_time_since_epoch": 1757410442827, "last_update_time_since_epoch": 1757410442827 },
+    { "id": 6, "type_id": 15, "uri": "40bcdcb75a2e86ad824e3032e516a4b3", "state": null, "name": "./data/models/experiment2/cnn_lh_predictor_0.9_acc_0.3745476223134305.pt:40bcdcb75a2e86ad824e3032e516a4b3:1", "external_id": null, "create_time_since_epoch": 1757410442829, "last_update_time_since_epoch": 1757410442829 },
+    { "id": 7, "type_id": 16, "uri": "202b0124-6192-11ef-9f7e-a4bf0103caf6", "state": null, "name": "Final_Metrics:202b0124-6192-11ef-9f7e-a4bf0103caf6:1", "external_id": null, "create_time_since_epoch": 1757410442831, "last_update_time_since_epoch": 1757410442831 },
+    { "id": 8, "type_id": 15, "uri": "9625c02bd858ad0d2e4221ea5b5948d0", "state": null, "name": "./data/models/experiment2/cnn_lh_predictor_0.9_acc_0.3788366375808477.pt:9625c02bd858ad0d2e4221ea5b5948d0:1", "external_id": null, "create_time_since_epoch": 1757410442833, "last_update_time_since_epoch": 1757410442833 },
+    { "id": 9, "type_id": 16, "uri": "4cf21d28-6192-11ef-9f7e-a4bf0103caf6", "state": null, "name": "Final_Metrics:4cf21d28-6192-11ef-9f7e-a4bf0103caf6:1", "external_id": null, "create_time_since_epoch": 1757410442835, "last_update_time_since_epoch": 1757410442835 },
+    { "id": 10, "type_id": 15, "uri": "dd60553d71c3a1eb19f7aca8696f5dbe", "state": null, "name": "./data/models/experiment2/cnn_lh_predictor_0.9_acc_0.39046920666406404.pt:dd60553d71c3a1eb19f7aca8696f5dbe:1", "external_id": null, "create_time_since_epoch": 1757410442836, "last_update_time_since_epoch": 1757410442836 }
+  ]
+},
+{
+  "table": "artifactproperty",
+  "schema": {
+    "artifact_id": { "type": "integer", "nullable": false },
+    "name": { "type": "varchar(255)", "nullable": false },
+    "is_custom_property": { "type": "boolean", "nullable": false },
+    "int_value": { "type": "integer", "nullable": true },
+    "double_value": { "type": "double precision", "nullable": true },
+    "string_value": { "type": "text", "nullable": true },
+    "byte_value": { "type": "bytea", "nullable": true },
+    "proto_value": { "type": "bytea", "nullable": true },
+    "bool_value": { "type": "boolean", "nullable": true }
+  },
+  "indexes": [
+    { "name": "artifactproperty_pkey", "type": "PRIMARY KEY", "columns": ["artifact_id", "name", "is_custom_property"] },
+    { "name": "idx_artifact_property_double", "type": "btree", "columns": ["name", "is_custom_property", "double_value"] },
+    { "name": "idx_artifact_property_int", "type": "btree", "columns": ["name", "is_custom_property", "int_value"] },
+    { "name": "idx_artifact_property_string", "type": "btree", "columns": ["name", "is_custom_property", "string_value"] }
+  ],
+  "records": [
+    { "artifact_id": 1, "name": "url", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": "Training-percent_3:/mnt/beegfs/users/koomthanama/dvc_remote/files/md5/d2/d07ee0686acedbb95ab82e7422576d.dir", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "artifact_id": 1, "name": "git_repo", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": "https://github.com/GA-FDP/mode_classifier.git", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "artifact_id": 1, "name": "Commit", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": "d2d07ee0686acedbb95ab82e7422576d.dir", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "artifact_id": 1, "name": "original_create_time_since_epoch", "is_custom_property": true, "int_value": null, "double_value": null, "string_value": "1724376071902", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "artifact_id": 2, "name": "url", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": "Training-percent_3:/mnt/beegfs/users/koomthanama/dvc_remote/files/md5/41/6863bdc943f47ab36d99e4d00f6b7c", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "artifact_id": 2, "name": "Commit", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": "416863bdc943f47ab36d99e4d00f6b7c", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "artifact_id": 2, "name": "git_repo", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": "https://github.com/GA-FDP/mode_classifier.git", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "artifact_id": 2, "name": "original_create_time_since_epoch", "is_custom_property": true, "int_value": null, "double_value": null, "string_value": "1724444798317", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "artifact_id": 3, "name": "url", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": "Training-percent_3:/mnt/beegfs/users/koomthanama/dvc_remote/files/md5/c1/b1c3f452229e2469b0916f8f10c705", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "artifact_id": 3, "name": "git_repo", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": "https://github.com/GA-FDP/mode_classifier.git", "byte_value": null, "proto_value": null, "bool_value": null }
+  ]
+},
+    {
+  "schema": {
+    "table_name": "association",
+    "columns": [
+      { "name": "id", "type": "integer", "nullable": false },
+      { "name": "context_id", "type": "integer", "nullable": false },
+      { "name": "execution_id", "type": "integer", "nullable": false }
+    ],
+    "primary_key": ["id"]
+  },
+  "records": {
+    "1": { "id": 1, "context_id": 2, "execution_id": 1 },
+    "2": { "id": 2, "context_id": 2, "execution_id": 2 },
+    "3": { "id": 3, "context_id": 2, "execution_id": 3 },
+    "4": { "id": 4, "context_id": 2, "execution_id": 4 },
+    "5": { "id": 5, "context_id": 2, "execution_id": 5 },
+    "6": { "id": 6, "context_id": 2, "execution_id": 6 },
+    "7": { "id": 7, "context_id": 2, "execution_id": 7 },
+    "8": { "id": 8, "context_id": 2, "execution_id": 8 },
+    "9": { "id": 9, "context_id": 2, "execution_id": 9 }
+  }
+},
+{
+  "schema": {
+    "table_name": "attribution",
+    "columns": [
+      { "name": "id", "type": "integer", "nullable": false },
+      { "name": "context_id", "type": "integer", "nullable": false },
+      { "name": "artifact_id", "type": "integer", "nullable": false }
+    ],
+    "primary_key": ["id"]
+  },
+  "records": {
+    "1":  { "id": 1,  "context_id": 2, "artifact_id": 1 },
+    "2":  { "id": 2,  "context_id": 2, "artifact_id": 2 },
+    "3":  { "id": 3,  "context_id": 2, "artifact_id": 3 },
+    "4":  { "id": 4,  "context_id": 2, "artifact_id": 4 },
+    "5":  { "id": 5,  "context_id": 2, "artifact_id": 5 },
+    "6":  { "id": 6,  "context_id": 2, "artifact_id": 6 },
+    "7":  { "id": 7,  "context_id": 2, "artifact_id": 7 },
+    "8":  { "id": 8,  "context_id": 2, "artifact_id": 8 },
+    "9":  { "id": 9,  "context_id": 2, "artifact_id": 9 },
+    "10": { "id": 10, "context_id": 2, "artifact_id": 10 }
+  }
+},
+{
+  "schema": {
+    "table_name": "context",
+    "columns": [
+      { "name": "id", "type": "integer", "nullable": false },
+      { "name": "type_id", "type": "integer", "nullable": false },
+      { "name": "name", "type": "character varying(255)", "nullable": false },
+      { "name": "external_id", "type": "character varying(255)", "nullable": true },
+      { "name": "create_time_since_epoch", "type": "bigint", "nullable": false },
+      { "name": "last_update_time_since_epoch", "type": "bigint", "nullable": false }
+    ],
+    "primary_key": ["id"],
+    "indexes": [
+      { "name": "context_pkey", "columns": ["id"], "type": "btree" },
+      { "name": "idx_context_name", "columns": ["name"], "type": "btree" },
+      { "name": "idx_context_type_id", "columns": ["type_id"], "type": "btree" },
+      { "name": "idx_context_external_id", "columns": ["external_id"], "type": "btree" }
+    ]
+  },
+  "records": {
+    "1": {
+      "id": 1,
+      "type_id": 10,
+      "name": "Training-percent_3",
+      "external_id": null,
+      "create_time_since_epoch": 1757410442806,
+      "last_update_time_since_epoch": 1757410442806
+    },
+    "2": {
+      "id": 2,
+      "type_id": 11,
+      "name": "Training-percent_3/Train",
+      "external_id": null,
+      "create_time_since_epoch": 1757410442809,
+      "last_update_time_since_epoch": 1757410442809
+    }
+  }
+},
+{
+  "schema": {
+    "table_name": "contextproperty",
+    "columns": [
+      { "name": "context_id", "type": "integer", "nullable": false },
+      { "name": "name", "type": "character varying(255)", "nullable": false },
+      { "name": "is_custom_property", "type": "boolean", "nullable": false },
+      { "name": "int_value", "type": "integer", "nullable": true },
+      { "name": "double_value", "type": "double precision", "nullable": true },
+      { "name": "string_value", "type": "text", "nullable": true },
+      { "name": "byte_value", "type": "bytea", "nullable": true },
+      { "name": "proto_value", "type": "bytea", "nullable": true },
+      { "name": "bool_value", "type": "boolean", "nullable": true }
+    ],
+    "primary_key": ["context_id", "name"],
+    "indexes": [
+      { "name": "contextproperty_pkey", "columns": ["context_id", "name"], "type": "btree" }
+    ]
+  },
+  "records": {
+    "1": {
+      "context_id": 1,
+      "name": "Pipeline",
+      "is_custom_property": false,
+      "int_value": null,
+      "double_value": null,
+      "string_value": "Training-percent_3",
+      "byte_value": null,
+      "proto_value": null,
+      "bool_value": null
+    },
+    "2": {
+      "context_id": 2,
+      "name": "Pipeline_Stage",
+      "is_custom_property": false,
+      "int_value": null,
+      "double_value": null,
+      "string_value": "Training-percent_3/Train",
+      "byte_value": null,
+      "proto_value": null,
+      "bool_value": null
+    },
+    "3": {
+      "context_id": 2,
+      "name": "original_create_time_since_epoch",
+      "is_custom_property": true,
+      "int_value": null,
+      "double_value": null,
+      "string_value": "1724375988853",
+      "byte_value": null,
+      "proto_value": null,
+      "bool_value": null
+    }
+  }
+},
+{
+  "schema": {
+    "table_name": "event",
+    "columns": [
+      { "name": "id", "type": "integer", "nullable": false, "default": "nextval('event_id_seq'::regclass)" },
+      { "name": "artifact_id", "type": "integer", "nullable": false },
+      { "name": "execution_id", "type": "integer", "nullable": false },
+      { "name": "type", "type": "integer", "nullable": false },
+      { "name": "milliseconds_since_epoch", "type": "bigint", "nullable": true }
+    ],
+    "primary_key": ["id"],
+    "indexes": [
+      { "name": "event_pkey", "type": "PRIMARY KEY", "columns": ["id"] },
+      { "name": "idx_event_execution_id", "type": "btree", "columns": ["execution_id"] },
+      { "name": "uniqueevent", "type": "UNIQUE", "columns": ["artifact_id", "execution_id", "type"] }
+    ]
+  },
+  "records": {
+    "1": { "id": 1, "artifact_id": 1, "execution_id": 1, "type": 3, "milliseconds_since_epoch": 1757410442816 },
+    "2": { "id": 2, "artifact_id": 2, "execution_id": 1, "type": 4, "milliseconds_since_epoch": 1757410442820 },
+    "3": { "id": 3, "artifact_id": 3, "execution_id": 1, "type": 4, "milliseconds_since_epoch": 1757410442822 },
+    "4": { "id": 4, "artifact_id": 4, "execution_id": 1, "type": 4, "milliseconds_since_epoch": 1757410442824 },
+    "5": { "id": 5, "artifact_id": 5, "execution_id": 1, "type": 4, "milliseconds_since_epoch": 1757410442826 },
+    "6": { "id": 6, "artifact_id": 6, "execution_id": 1, "type": 4, "milliseconds_since_epoch": 1757410442828 },
+    "7": { "id": 7, "artifact_id": 7, "execution_id": 1, "type": 4, "milliseconds_since_epoch": 1757410442830 },
+    "8": { "id": 8, "artifact_id": 8, "execution_id": 1, "type": 4, "milliseconds_since_epoch": 1757410442832 },
+    "9": { "id": 9, "artifact_id": 9, "execution_id": 1, "type": 4, "milliseconds_since_epoch": 1757410442834 },
+    "10": { "id": 10, "artifact_id": 10, "execution_id": 1, "type": 4, "milliseconds_since_epoch": 1757410442836 }
+  }
+},
+{
+  "schema": {
+    "table_name": "event_path",
+    "columns": [
+      { "name": "event_id", "type": "integer", "nullable": false },
+      { "name": "is_index_step", "type": "boolean", "nullable": false },
+      { "name": "step_index", "type": "integer", "nullable": true },
+      { "name": "step_key", "type": "text", "nullable": true }
+    ],
+    "indexes": [
+      { "name": "idx_eventpath_event_id", "type": "btree", "columns": ["event_id"] }
+    ]
+  },
+  "records": {
+    "1": { "event_id": 157, "is_index_step": false, "step_index": null, "step_key": "./data/shot_netcdfs:d2d07ee0686acedbb95ab82e7422576d.dir" },
+    "2": { "event_id": 159, "is_index_step": false, "step_index": null, "step_key": "cmf_artifacts/cfebe9b6-60ed-11ef-9f7e-a4bf0103caf6/dataslice/testing_0.1:c1b1c3f452229e2469b0916f8f10c705" },
+    "3": { "event_id": 345, "is_index_step": false, "step_index": null, "step_key": "./data/shot_netcdfs:d2d07ee0686acedbb95ab82e7422576d.dir" },
+    "4": { "event_id": 347, "is_index_step": false, "step_index": null, "step_key": "cmf_artifacts/cfebe9b6-60ed-11ef-9f7e-a4bf0103caf6/dataslice/testing_0.1:c1b1c3f452229e2469b0916f8f10c705" },
+    "5": { "event_id": 355, "is_index_step": false, "step_index": null, "step_key": "./data/shot_netcdfs:d2d07ee0686acedbb95ab82e7422576d.dir" },
+    "6": { "event_id": 357, "is_index_step": false, "step_index": null, "step_key": "cmf_artifacts/cfebe9b6-60ed-11ef-9f7e-a4bf0103caf6/dataslice/testing_0.1:c1b1c3f452229e2469b0916f8f10c705" },
+    "7": { "event_id": 371, "is_index_step": false, "step_index": null, "step_key": "./data/shot_netcdfs:d2d07ee0686acedbb95ab82e7422576d.dir" },
+    "8": { "event_id": 373, "is_index_step": false, "step_index": null, "step_key": "cmf_artifacts/cfebe9b6-60ed-11ef-9f7e-a4bf0103caf6/dataslice/testing_0.1:c1b1c3f452229e2469b0916f8f10c705" },
+    "9": { "event_id": 387, "is_index_step": false, "step_index": null, "step_key": "./data/shot_netcdfs:d2d07ee0686acedbb95ab82e7422576d.dir" },
+    "10": { "event_id": 389, "is_index_step": false, "step_index": null, "step_key": "cmf_artifacts/cfebe9b6-60ed-11ef-9f7e-a4bf0103caf6/dataslice/testing_0.1:c1b1c3f452229e2469b0916f8f10c705" }
+  }
+},
+{
+  "table": "execution",
+  "schema": {
+    "id": { "type": "integer", "nullable": false, "default": "nextval('execution_id_seq'::regclass)" },
+    "type_id": { "type": "integer", "nullable": false },
+    "last_known_state": { "type": "integer", "nullable": true },
+    "name": { "type": "varchar(255)", "nullable": true },
+    "external_id": { "type": "varchar(255)", "nullable": true },
+    "create_time_since_epoch": { "type": "bigint", "nullable": false, "default": 0 },
+    "last_update_time_since_epoch": { "type": "bigint", "nullable": false, "default": 0 }
+  },
+  "indexes": [
+    { "name": "execution_pkey", "type": "PRIMARY KEY", "columns": ["id"] },
+    { "name": "execution_external_id_key", "type": "UNIQUE", "columns": ["external_id"] },
+    { "name": "idx_execution_create_time_since_epoch", "type": "btree", "columns": ["create_time_since_epoch"] },
+    { "name": "idx_execution_external_id", "type": "btree", "columns": ["external_id"] },
+    { "name": "idx_execution_last_update_time_since_epoch", "type": "btree", "columns": ["last_update_time_since_epoch"] },
+    { "name": "uniqueexecutiontypename", "type": "UNIQUE", "columns": ["type_id", "name"] }
+  ],
+  "records": [
+    { "id": 1, "type_id": 12, "last_known_state": null, "name": null, "external_id": null, "create_time_since_epoch": 1757410442811, "last_update_time_since_epoch": 1757410442814 },
+    { "id": 2, "type_id": 12, "last_known_state": null, "name": null, "external_id": null, "create_time_since_epoch": 1757410443121, "last_update_time_since_epoch": 1757410443124 },
+    { "id": 3, "type_id": 12, "last_known_state": null, "name": null, "external_id": null, "create_time_since_epoch": 1757410443490, "last_update_time_since_epoch": 1757410443493 },
+    { "id": 4, "type_id": 12, "last_known_state": null, "name": null, "external_id": null, "create_time_since_epoch": 1757410443513, "last_update_time_since_epoch": 1757410443516 },
+    { "id": 5, "type_id": 12, "last_known_state": null, "name": null, "external_id": null, "create_time_since_epoch": 1757410443547, "last_update_time_since_epoch": 1757410443550 },
+    { "id": 6, "type_id": 12, "last_known_state": null, "name": null, "external_id": null, "create_time_since_epoch": 1757410443583, "last_update_time_since_epoch": 1757410443585 },
+    { "id": 7, "type_id": 12, "last_known_state": null, "name": null, "external_id": null, "create_time_since_epoch": 1757410443601, "last_update_time_since_epoch": 1757410443603 },
+    { "id": 8, "type_id": 12, "last_known_state": null, "name": null, "external_id": null, "create_time_since_epoch": 1757410443628, "last_update_time_since_epoch": 1757410443630 },
+    { "id": 9, "type_id": 12, "last_known_state": null, "name": null, "external_id": null, "create_time_since_epoch": 1757410443647, "last_update_time_since_epoch": 1757410443649 }
+  ]
+},
+{
+  "table": "executionproperty",
+  "schema": {
+    "execution_id": { "type": "integer", "nullable": false },
+    "name": { "type": "varchar(255)", "nullable": false },
+    "is_custom_property": { "type": "boolean", "nullable": false },
+    "int_value": { "type": "integer", "nullable": true },
+    "double_value": { "type": "double precision", "nullable": true },
+    "string_value": { "type": "text", "nullable": true },
+    "byte_value": { "type": "bytea", "nullable": true },
+    "proto_value": { "type": "bytea", "nullable": true },
+    "bool_value": { "type": "boolean", "nullable": true }
+  },
+  "indexes": [
+    { "name": "executionproperty_pkey", "type": "PRIMARY KEY", "columns": ["execution_id", "name", "is_custom_property"] },
+    { "name": "idx_execution_property_double", "type": "btree", "columns": ["name", "is_custom_property", "double_value"] },
+    { "name": "idx_execution_property_int", "type": "btree", "columns": ["name", "is_custom_property", "int_value"] },
+    { "name": "idx_execution_property_string", "type": "btree", "columns": ["name", "is_custom_property", "string_value"] }
+  ],
+  "records": [
+    { "execution_id": 1, "name": "Git_Start_Commit", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": "8ccd707347a10e9cb13433b2050f410cd2f7a86b", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "execution_id": 1, "name": "Execution", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": "['cmf_experiment_mine.py']", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "execution_id": 1, "name": "Git_End_Commit", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": null, "byte_value": null, "proto_value": null, "bool_value": null },
+    { "execution_id": 1, "name": "Execution_type_name", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": "Training-percent_3/Train", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "execution_id": 1, "name": "Pipeline_id", "is_custom_property": false, "int_value": 1, "double_value": null, "string_value": null, "byte_value": null, "proto_value": null, "bool_value": null },
+    { "execution_id": 1, "name": "Context_Type", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": "Training-percent_3/Train", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "execution_id": 1, "name": "Pipeline_Type", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": "Training-percent_3", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "execution_id": 1, "name": "Git_Repo", "is_custom_property": false, "int_value": null, "double_value": null, "string_value": "https://github.com/GA-FDP/mode_classifier.git", "byte_value": null, "proto_value": null, "bool_value": null },
+    { "execution_id": 1, "name": "Context_ID", "is_custom_property": false, "int_value": 2, "double_value": null, "string_value": null, "byte_value": null, "proto_value": null, "bool_value": null },
+    { "execution_id": 1, "name": "test_percent", "is_custom_property": true, "int_value": null, "double_value": 0.9, "string_value": null, "byte_value": null, "proto_value": null, "bool_value": null }
+  ]
+},
+{
+  "table_name": "mlmdenv",
+  "schema": {
+    "columns": [
+      {
+        "name": "schema_version",
+        "type": "integer",
+        "nullable": false
+      }
+    ],
+    "indexes": [
+      {
+        "name": "mlmdenv_pkey",
+        "type": "PRIMARY KEY",
+        "columns": ["schema_version"]
+      }
+    ]
+  },
+  "records": [
+    {
+      "schema_version": 10
+    }
+  ]
+},
+
+{
+  "table": "parenttype",
+  "schema": {
+    "type_id": { "type": "integer", "nullable": false },
+    "parent_type_id": { "type": "integer", "nullable": false }
+  },
+  "indexes": [
+    { "name": "parenttype_pkey", "type": "PRIMARY KEY", "columns": ["type_id", "parent_type_id"] }
+  ],
+  "records": []
+},
+{
+  "table": "parentcontext",
+  "schema": {
+    "context_id": { "type": "integer", "nullable": false },
+    "parent_context_id": { "type": "integer", "nullable": false }
+  },
+  "indexes": [
+    { "name": "parentcontext_pkey", "type": "PRIMARY KEY", "columns": ["context_id", "parent_context_id"] },
+    { "name": "idx_parentcontext_parent_context_id", "type": "btree", "columns": ["parent_context_id"] }
+  ],
+  "records": [
+    { "context_id": 2, "parent_context_id": 1 }
+  ]
+},
+{
+  "table": "type",
+  "schema": {
+    "id": { "type": "integer", "nullable": false, "default": "nextval('type_id_seq'::regclass)" },
+    "name": { "type": "varchar(255)", "nullable": false },
+    "version": { "type": "varchar(255)", "nullable": true },
+    "type_kind": { "type": "smallint", "nullable": false },
+    "description": { "type": "text", "nullable": true },
+    "input_type": { "type": "text", "nullable": true },
+    "output_type": { "type": "text", "nullable": true },
+    "external_id": { "type": "varchar(255)", "nullable": true }
+  },
+  "indexes": [
+    { "name": "type_pkey", "type": "PRIMARY KEY", "columns": ["id"] },
+    { "name": "idx_type_external_id", "type": "btree", "columns": ["external_id"] },
+    { "name": "idx_type_name", "type": "btree", "columns": ["name"] },
+    { "name": "type_external_id_key", "type": "UNIQUE", "columns": ["external_id"] }
+  ],
+  "records": [
+    { "id": 1, "name": "mlmd.Dataset", "version": null, "type_kind": 1, "description": null, "input_type": null, "output_type": null, "external_id": null },
+    { "id": 2, "name": "mlmd.Model", "version": null, "type_kind": 1, "description": null, "input_type": null, "output_type": null, "external_id": null },
+    { "id": 3, "name": "mlmd.Metrics", "version": null, "type_kind": 1, "description": null, "input_type": null, "output_type": null, "external_id": null },
+    { "id": 4, "name": "mlmd.Statistics", "version": null, "type_kind": 1, "description": null, "input_type": null, "output_type": null, "external_id": null },
+    { "id": 5, "name": "mlmd.Train", "version": null, "type_kind": 0, "description": null, "input_type": null, "output_type": null, "external_id": null },
+    { "id": 6, "name": "mlmd.Transform", "version": null, "type_kind": 0, "description": null, "input_type": null, "output_type": null, "external_id": null },
+    { "id": 7, "name": "mlmd.Process", "version": null, "type_kind": 0, "description": null, "input_type": null, "output_type": null, "external_id": null },
+    { "id": 8, "name": "mlmd.Evaluate", "version": null, "type_kind": 0, "description": null, "input_type": null, "output_type": null, "external_id": null },
+    { "id": 9, "name": "mlmd.Deploy", "version": null, "type_kind": 0, "description": null, "input_type": null, "output_type": null, "external_id": null },
+    { "id": 10, "name": "Parent_Context", "version": null, "type_kind": 2, "description": null, "input_type": null, "output_type": null, "external_id": null }
+  ]
+},
+{
+  "table": "typeproperty",
+  "schema": {
+    "type_id": { "type": "integer", "nullable": false },
+    "name": { "type": "varchar(255)", "nullable": false },
+    "data_type": { "type": "integer", "nullable": true }
+  },
+  "indexes": [
+    { "name": "typeproperty_pkey", "type": "PRIMARY KEY", "columns": ["type_id", "name"] }
+  ],
+  "records": [
+    { "type_id": 10, "name": "Pipeline", "data_type": 3 },
+    { "type_id": 11, "name": "Pipeline_Stage", "data_type": 3 },
+    { "type_id": 12, "name": "Context_Type", "data_type": 3 },
+    { "type_id": 12, "name": "Pipeline_Type", "data_type": 3 },
+    { "type_id": 12, "name": "Execution_type_name", "data_type": 3 },
+    { "type_id": 12, "name": "Pipeline_id", "data_type": 1 },
+    { "type_id": 12, "name": "Execution_uuid", "data_type": 3 },
+    { "type_id": 12, "name": "Git_End_Commit", "data_type": 3 },
+    { "type_id": 12, "name": "Git_Repo", "data_type": 3 },
+    { "type_id": 12, "name": "Execution", "data_type": 3 }
+  ]
+}
+    ]
+}"""
+
+
+base_prompt = f"""
+You are an expert SQL generator.
+
+## Instructions
+- Only generate a valid SQL query.
+- Always end the query with a semicolon (;).
+- Do not explain, repeat the question, or output anything except SQL.
+- Use the database schema below.
+
+## Database Schema
+{input_schema}
+
+## Examples
+nlp: Which artifacts were linked with GitHub repository `mode_classifier`?
+sql: SELECT a.*
+FROM artifact a
+JOIN artifactproperty ap ON a.id = ap.artifact_id
+WHERE ap.name = 'git_repo'
+  AND ap.string_value LIKE '%mode_classifier%';
+
+nlp: I’d like to see all the execution runs under the pipeline `Training-percent_3`.
+sql: SELECT e.*
+FROM execution e
+JOIN executionproperty ep ON e.id = ep.execution_id
+WHERE ep.name = 'Pipeline_Type'
+  AND ep.string_value = 'Training-percent_3';
+
+nlp: Show all artifact names containing `cnn_lh_predictor`.
+sql: SELECT id, name
+FROM artifact
+WHERE name LIKE '%cnn_lh_predictor%';
+
+nlp: Display all artifacts whose model_name, model_framework, and model_type are null
+sql: SELECT a.*
+FROM artifact a
+WHERE NOT EXISTS (
+    SELECT 1 FROM artifactproperty ap
+    WHERE ap.artifact_id = a.id AND ap.name = 'model_name'
+)
+AND NOT EXISTS (
+    SELECT 1 FROM artifactproperty ap
+    WHERE ap.artifact_id = a.id AND ap.name = 'model_framework'
+)
+AND NOT EXISTS (
+    SELECT 1 FROM artifactproperty ap
+    WHERE ap.artifact_id = a.id AND ap.name = 'model_type'
+);
+
+nlp: Which model has `model_name` set to `TCNN1d`?
+sql: SELECT a.id AS artifact_id,
+       a.name AS artifact_name,
+       ap.string_value AS model_name
+FROM artifact a
+JOIN artifactproperty ap 
+     ON a.id = ap.artifact_id
+WHERE ap.name = 'model_name'
+  AND ap.string_value = 'TCNN1d';
+
+nlp: Display all executions whose train percent is 0.9.
+sql: SELECT e.id AS execution_id,
+       e.name AS execution_name,
+       ep.double_value AS train_percent
+FROM execution e
+JOIN executionproperty ep 
+     ON e.id = ep.execution_id
+WHERE ep.name = 'train_percent'
+  AND ep.double_value = 0.9;
+
+nlp: Display dataslice with name `cmf_artifacts/3b75a834-611b-11ef-9f7e-a4bf0103caf6/dataslice/training_0.5:880227273ac75a7ae2341239c67134cd`
+sql: SELECT a.*
+FROM artifact a
+JOIN type t 
+     ON a.type_id = t.id
+WHERE t.name = 'Dataslice'
+  AND a.name = 'cmf_artifacts/3b75a834-611b-11ef-9f7e-a4bf0103caf6/dataslice/training_0.5:880227273ac75a7ae2341239c67134cd';
+
+nlp: Display all artifacts created on 09 Sep 2025.
+sql: SELECT a.*
+FROM artifact a
+WHERE TO_CHAR(TO_TIMESTAMP(a.create_time_since_epoch / 1000), 'YYYY-MM-DD') = '2025-09-09';
+
+nlp: Display all executions containing output classes ['BBQH', 'QH', 'WPQH'].
+sql: SELECT e.*
+FROM execution e
+JOIN executionproperty ep 
+     ON e.id = ep.execution_id
+WHERE ep.name = 'output_classes'
+  AND ep.string_value = '[''BBQH'', ''QH'', ''WPQH'']';
+
+nlp: Display all executions using fewer than 40 training files.
+sql: SELECT e.*
+FROM execution e
+JOIN executionproperty ep
+     ON e.id = ep.execution_id
+WHERE ep.name = 'training_files'
+  AND (
+        LENGTH(ep.string_value) - LENGTH(REPLACE(ep.string_value, ',', '')) + 1
+      ) < 40;
+
+---
+
+## Now generate SQL
+nlp: {{user_question}}
+sql:
+"""
+
+
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
+
+model_name = "./Qwen-2.5-3b-Text_to_SQL"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(
+    model_name,
+    torch_dtype=torch.float16,
+    device_map="auto"
+)
+
+
+def nlp_to_sql(question):
+    # Add clear formatting
+    prompt = base_prompt.strip() + f"\n\nnlp: {question}\nsql:"
+    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+
+    outputs = model.generate(
+        **inputs,
+        max_new_tokens=256,        # prevent overly long rambling
+        do_sample=False,           # deterministic, no random sampling
+        eos_token_id=tokenizer.eos_token_id  # stop at end-of-sequence
+    )
+
+    # Only decode *new tokens after the prompt*
+    generated = outputs[0][inputs["input_ids"].shape[1]:]
+    result = tokenizer.decode(generated, skip_special_tokens=True)
+
+    # Clean output
+    result = result.strip()
+    if ";" in result:   # cut off anything after first semicolon
+        result = result.split(";")[0].strip() + ";"
+
+    return result
+
+
+if __name__ == "__main__":
+  print("Enter your NLP queston (press Ctrl+C to exit):")
+  try:
+    while True:
+      question = input("\nnlp:")
+      sql = nlp_to_sql(question)
+      print("sql:",sql)
+  except KeyboardInterrupt:
+    print("\nExiting...")
+
