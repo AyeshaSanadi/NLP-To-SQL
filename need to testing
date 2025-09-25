@@ -1,0 +1,49 @@
+
+Exiting...
+(myenv) sanadiay@ai01:~/QwenModel$ python main.py
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards: 100%|##########################################################################################| 2/2 [00:01<00:00,  1.03it/s]
+Enter your NLP question (press Ctrl+C to exit):
+NLP Question: Which executions belong to context id `2`
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+SQL: SELECT * FROM execution WHERE context_id = 2;
+NLP Question: display all the models that were created during the training stage?
+SQL: SELECT a.name FROM artifact a JOIN type t ON a.type_id = t.id WHERE t.name = 'Model' AND a.name LIKE '%training%';
+NLP Question: Can you show me all models where the validation loss dropped below 1.0?
+SQL: SELECT * FROM artifact WHERE name LIKE '%model%' AND type_id = 14 AND state = 0 AND double_value < 1.0;
+NLP Question: What's the accuracy of the very first model that was trained?
+SQL: SELECT a.name, ap.double_value AS accuracy FROM artifact a JOIN artifactproperty ap ON a.id = ap.artifact_id WHERE ap.name = 'accuracy' ORDER BY a.create_time_since_epoch LIMIT 1;
+NLP Question: list all the models with accuracy between 0.2 and 0.4?
+SQL: SELECT * FROM artifact WHERE type_id = 2 AND accuracy BETWEEN 0.2 AND 0.4;
+NLP Question: What's the earliest dataset recorded here?
+SQL: SELECT MIN(create_time_since_epoch) FROM artifact WHERE type_id = 1;
+NLP Question: Which models specify `model_framework` as Pytorch?
+SQL: SELECT a.id, a.name, ap.string_value AS model_framework FROM artifact a JOIN artifactproperty ap ON a.id = ap.artifact_id WHERE ap.name = 'model_framework' AND ap.string_value = 'PyTorch';
+NLP Question: display all execution whose test percent is 0.9
+SQL: SELECT * FROM execution WHERE test_percent = 0.9;
+NLP Question: What was the lowest validation loss recorded, and which model does it belong to?
+SQL: SELECT MIN(ap.double_value) AS min_val_loss, a.name AS model_name FROM artifact a JOIN artifactproperty ap ON a.id = ap.artifact_id WHERE ap.name = 'val_loss';
+NLP Question: Get artifacts created after timestamp 1757410442820.
+SQL: SELECT * FROM artifact WHERE create_time_since_epoch > 1757410442820;
+NLP Question: display artifacts whose original_create_time_since_epoch is 1724376071902
+SQL: SELECT * FROM artifact WHERE original_create_time_since_epoch = 1724376071902;
+NLP Question: Which model entries are associated with commit 40bcdcb75a2e86ad824e3032e516a4b3?
+SQL: SELECT a.* FROM artifact a JOIN artifactproperty ap ON a.id = ap.artifact_id WHERE ap.name = 'Commit' AND ap.string_value = '40bcdcb75a2e86ad824e3032e516a4b3';
+NLP Question: Display dataset which has execution type name contains /Train
+SQL: SELECT a.* FROM artifact a JOIN execution e ON a.id = e.artifact_id JOIN executionproperty ep ON e.id = ep.execution_id WHERE ep.name = 'Execution_type_name' AND ep.string_value LIKE '%/Train%';
+NLP Question: fetch executions that have a property named pythonenv
+SQL: SELECT * FROM executionproperty WHERE name = 'pythonenv';
+NLP Question: Display artifacts where artifact type is label
+SQL: SELECT * FROM artifact WHERE type_id IN (SELECT id FROM type WHERE name = 'mlmd.Label');
+NLP Question: display all executions where maximum features are used above 1k
+SQL: SELECT * FROM execution WHERE MAX(features) > 1000;
+NLP Question: Fetch executions that have any of the three properties (training_files, ngrams, and split)
+SQL: SELECT * FROM execution WHERE training_files IS NOT NULL OR ngrams IS NOT NULL OR split IS NOT NULL;
+NLP Question: display all artifacts where md5 keyword is present inside url.
+SQL: SELECT * FROM artifact WHERE name LIKE '%md5%' AND uri LIKE '%md5%';
+NLP Question: display artifacts whose average precision is above and equal to .5
+SQL: SELECT a.* FROM artifact a JOIN artifactproperty ap ON a.id = ap.artifact_id WHERE ap.name = 'avg_prec' AND ap.double_value >= 0.5;
+NLP Question: Display all the artifacts that contains less than 2 custom properties
+SQL: SELECT * FROM artifact WHERE COUNT(*) OVER (PARTITION BY id) < 2;
+GPU memory cleared and objects deleted.
+(myenv) sanadiay@ai01:~/QwenModel$
