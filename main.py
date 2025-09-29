@@ -10,38 +10,52 @@ base_prompt = f"""
 You are an expert SQL generator.
 
 ## Instructions
+
 - Only generate a valid SQL query.
 - Always end the query with a semicolon (;).
 - Do not explain, repeat the question, or output anything except SQL.
-- Use the database schema below.
-- The list of valid property names is given below (from artifactproperty.name and executionproperty.name). 
-- When user uses natural language (like "validation loss"), map it to the closest valid property name (e.g., 'val_loss').
-- Never invent property names that are not in the list.
+- Use the database schema provided below.
+- The properties related to artifacts and executions are stored inside `artifactproperty`
+  and `executionproperty` tables under the `name` column respectivly.
+- The properties which are available in `name` columns are the following:
+
+  **ArtifactProperty:**
+  labels, url, accuracy, model_type, user-metadata1, labels_uri, git_repo,
+  roc_auc, user1, metrics_name, original_create_time_since_epoch, dataset_uri,
+  model_name, model_framework, Commit, val_loss, avg_prec
+
+  **ExecutionProperty:**
+  seed, split, input_signals, test_percent, Python_Env, train_percent, n_est,
+  ngrams, Git_Start_Commit, output_classes, Git_End_Commit, Execution,
+  original_create_time_since_epoch, Execution_type_name, Pipeline_id,
+  training_files, test_files, Git_Repo, Execution_uuid, Context_Type,
+  max_features, min_split, Pipeline_Type, Context_ID
+
+- When the user uses natural language terms (e.g., "validation loss", "github repo"), map them to the closest valid property name (e.g., "val_loss", "git_repo").
+- Never invent property names that are not in the list above.
 
 ## Database Schema
+
+Here are the database schemas, including the description of each table, table schema, indexes, and 10 sample records in JSON format:
 {json.dumps(input_schema, indent=2)}
 
-## Valid Property Names
-ArtifactProperty:
-labels, url, accuracy, model_type, user-metadata1, labels_uri, git_repo,
-roc_auc, user1, metrics_name, original_create_time_since_epoch, dataset_uri,
-model_name, model_framework, Commit, val_loss, avg_prec
+## Examples Context
 
-ExecutionProperty:
-seed, split, input_signals, test_percent, Python_Env, train_percent, n_est,
-ngrams, Git_Start_Commit, output_classes, Git_End_Commit, Execution,
-original_create_time_since_epoch, Execution_type_name, Pipeline_id,
-training_files, test_files, Git_Repo, Execution_uuid, Context_Type,
-max_features, min_split, Pipeline_Type, Context_ID
+The following examples are provided for reference.  
+Each example demonstrates how to map a user’s natural language question into a valid SQL query using the given schema and property rules.
 
-## Examples
+- User Question: The natural language question asked by the user.
+- Expected SQL: The valid SQL query that answers the user question. The SQL query will always be enclosed inside `sql ... ` fences.
+- Description: An explanation of how the SQL query was generated and why specific tables or columns were used.
+- Note: Additional details about table relationships or important schema connections used in the query.
+
 {few_shot_examples}
 
-Now generate the SQL.
-NLP Question: {{user_question}}
-SQL:
-"""
+## Your task is to generate question and valid sql pair
 
+User Question: {{user_question}}
+Expected SQL:
+"""
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
@@ -57,7 +71,7 @@ model = AutoModelForCausalLM.from_pretrained(
 
 def nlp_to_sql(question):
     # Add clear formatting
-    prompt = base_prompt.strip() + f"\n\nNLP Question: {question}\nSQL:"
+    prompt = base_prompt.strip() + f"\n\nUser Question: {question}\nExpected SQL:"
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
 
     outputs = model.generate(

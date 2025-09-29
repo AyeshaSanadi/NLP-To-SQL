@@ -1,32 +1,41 @@
-NLP Question: Which artifacts were linked with GitHub repository mode_classifier?
-Description of SQL Query: This query retrieves all artifacts that are linked to the GitHub repository named mode_classifier. The repository information is stored as metadata in the artifactproperty table, where the property name is git_repo. We join the artifact table with the artifactproperty table on the artifact ID, then filter for rows where ap.name is git_repo and the ap.string_value contains mode_classifier.
-SQL:
-SELECT a.*
+Following examples are used for reference.
+user question: it conrains user uqestion the question asked my user
+execpetxec sql: the valid sql for that question
+Description: Description of sql query how it is generated
+note: this tells that how one table related to other.
+
+User Question: Which artifacts were linked with GitHub repository mode_classifier?
+Expected SQL:
+```SELECT a.*
 FROM artifact a
 JOIN artifactproperty ap ON a.id = ap.artifact_id
 WHERE ap.name = 'git_repo'
-  AND ap.string_value LIKE '%mode_classifier%';
+  AND ap.string_value LIKE '%mode_classifier%';```
+Description of SQL Query: This query retrieves all artifacts that are linked to the GitHub repository named mode_classifier. The repository information is stored as metadata in the artifactproperty table, where the property name is git_repo. We join the artifact table with the artifactproperty table on the artifact ID, then filter for rows where ap.name is git_repo and the ap.string_value contains mode_classifier.
+Note: There is no explicit foreign key defined, but the following tables are related to each other: The artifactproperty.artifact_id column is related to the artifact.id column.
 
-NLP Question: I would like to see all the execution runs under the pipeline `Training-percent_3`.
-Description of SQL Query: This query retrieves all executions that are linked to the pipeline named `Training-percent_3`. The pipeline information is stored as metadata in the `executionproperty` table, where the property name is `Pipeline_Type`. The query joins the `execution` table with the `executionproperty` table on the execution ID and filters for rows where `ep.name` is `Pipeline_Type` and `ep.string_value` equals `Training-percent_3`.
-SQL:
-SELECT e.*
+User Question: I would like to see all the execution runs under the pipeline `Training-percent_3`.
+Expected SQL:
+```SELECT e.*
 FROM execution e
 JOIN executionproperty ep ON e.id = ep.execution_id
 WHERE ep.name = 'Pipeline_Type'
-  AND ep.string_value = 'Training-percent_3';
+  AND ep.string_value = 'Training-percent_3';```
+Description of SQL Query: This query retrieves all executions that are linked to the pipeline named `Training-percent_3`. The pipeline information is stored as metadata in the `executionproperty` table, where the property name is `Pipeline_Type`. The query joins the `execution` table with the `executionproperty` table on the execution ID and filters for rows where `ep.name` is `Pipeline_Type` and `ep.string_value` equals `Training-percent_3`.
+Note: There is no explicit foreign key defined, but the following tables are related to each other:
+The `executionproperty.execution_id` column is related to the `execution.id` column.
 
-NLP Question: Show all artifact names containing `cnn_lh_predictor`.
-Description of SQL Query: This query retrieves all artifacts whose `name` column contains the string `cnn_lh_predictor`. We directly filter the `artifact` table using a `LIKE` condition on the `name` column.
-SQL:
-SELECT id, name
+User Question: Show all artifact names containing `cnn_lh_predictor`.
+Expected SQL:
+```SELECT id, name
 FROM artifact
-WHERE name LIKE '%cnn_lh_predictor%';
+WHERE name LIKE '%cnn_lh_predictor%';```
+Description of SQL Query: This query retrieves all artifacts whose `name` column contains the string `cnn_lh_predictor`. We directly filter the `artifact` table using a `LIKE` condition on the `name` column.
+Note: In this query, only the `artifact` table is used, so there are no relationships with other tables.
 
-NLP Question: Display all artifacts whose `model_name`, `model_framework`, and `model_type` are null.
-Description of SQL Query: This query retrieves all artifacts that do not have the metadata properties `model_name`, `model_framework`, and `model_type`. Since these properties are stored in the `artifactproperty` table, the query checks for the absence of each property for a given artifact. The `NOT EXISTS` subqueries ensure that if any of these property names are present for an artifact, it is excluded from the result.
-SQL:
-SELECT a.*
+User Question: Display all artifacts whose `model_name`, `model_framework`, and `model_type` are null.
+Expected SQL:
+```SELECT a.*
 FROM artifact a
 WHERE NOT EXISTS (
     SELECT 1 FROM artifactproperty ap
@@ -39,68 +48,82 @@ AND NOT EXISTS (
 AND NOT EXISTS (
     SELECT 1 FROM artifactproperty ap
     WHERE ap.artifact_id = a.id AND ap.name = 'model_type'
-);
+);```
+Description of SQL Query: This query retrieves all artifacts that do not have the metadata properties `model_name`, `model_framework`, and `model_type`. Since these properties are stored in the `artifactproperty` table, the query checks for the absence of each property for a given artifact. The `NOT EXISTS` subqueries ensure that if any of these property names are present for an artifact, it is excluded from the result.
+Note: There is no explicit foreign key defined, but the following tables are related to each other:
+The `artifactproperty.artifact_id` column is related to the `artifact.id` column.
 
-NLP Question: Which model has `model_name` set to `TCNN1d`?
-Description of SQL Query: This query retrieves all artifacts whose `model_name` property is equal to `TCNN1d`. The model name is stored as metadata in the `artifactproperty` table under the property name `model_name`. The query joins the `artifact` table with the `artifactproperty` table on the artifact ID and filters for rows where `ap.name` is `model_name` and `ap.string_value` equals `TCNN1d`. The query returns the artifact ID, artifact name, and the model name for reference.
-SQL:
-SELECT a.id AS artifact_id,
+User Question: Which model has `model_name` set to `TCNN1d`?
+Expected SQL:
+```SELECT a.id AS artifact_id,
        a.name AS artifact_name,
        ap.string_value AS model_name
 FROM artifact a
 JOIN artifactproperty ap 
      ON a.id = ap.artifact_id
 WHERE ap.name = 'model_name'
-  AND ap.string_value = 'TCNN1d';
+  AND ap.string_value = 'TCNN1d';```
+Description of SQL Query: This query retrieves all artifacts whose `model_name` property is equal to `TCNN1d`. The model name is stored as metadata in the `artifactproperty` table under the property name `model_name`. The query joins the `artifact` table with the `artifactproperty` table on the artifact ID and filters for rows where `ap.name` is `model_name` and `ap.string_value` equals `TCNN1d`. The query returns the artifact ID, artifact name, and the model name for reference.
+Note: There is no explicit foreign key defined, but the following tables are related to each other:
+The `artifactproperty.artifact_id` column is related to the `artifact.id` column.
 
-NLP Question: Display all executions whose train percent is `0.9`.
-Description of SQL Query: This query retrieves all executions where the training percentage is equal to `0.9`. The training percentage is stored as a metadata property in the `executionproperty` table under the property name `train_percent`. The query joins the `execution` table with the `executionproperty` table using the execution ID and filters for rows where the property name is `train_percent` and the `double_value` column equals `0.9`. The query also selects the execution ID, execution name, and the train percent value for clarity.
-SQL:
-SELECT e.id AS execution_id,
+User Question: Display all executions whose train percent is `0.9`.
+Expected SQL:
+```SELECT e.id AS execution_id,
        e.name AS execution_name,
        ep.double_value AS train_percent
 FROM execution e
 JOIN executionproperty ep 
      ON e.id = ep.execution_id
 WHERE ep.name = 'train_percent'
-  AND ep.double_value = 0.9;
+  AND ep.double_value = 0.9;```
+Description of SQL Query: This query retrieves all executions where the training percentage is equal to `0.9`. The training percentage is stored as a metadata property in the `executionproperty` table under the property name `train_percent`. The query joins the `execution` table with the `executionproperty` table using the execution ID and filters for rows where the property name is `train_percent` and the `double_value` column equals `0.9`. The query also selects the execution ID, execution name, and the train percent value for clarity.
+Note: There is no explicit foreign key defined, but the following tables are related to each other:
+The `executionproperty.execution_id` column is related to the `execution.id` column.
 
-NLP Question: Display dataslice with name `cmf_artifacts/3b75a834-611b-11ef-9f7e-a4bf0103caf6/dataslice/training_0.5:880227273ac75a7ae2341239c67134cd`.
-Description of SQL Query: This query retrieves a specific artifact that represents a dataslice. To identify dataslices, the `artifact` table is joined with the `type` table using the `type_id` column. The query filters for rows where the type name is `Dataslice` and the artifact’s `name` column exactly matches the given path (`cmf_artifacts/.../training_0.5:880227273ac75a7ae2341239c67134cd`).
-SQL:
-SELECT a.*
+User Question: Display dataslice with name `cmf_artifacts/3b75a834-611b-11ef-9f7e-a4bf0103caf6/dataslice/training_0.5:880227273ac75a7ae2341239c67134cd`.
+Expected SQL:
+```SELECT a.*
 FROM artifact a
 JOIN type t 
      ON a.type_id = t.id
 WHERE t.name = 'Dataslice'
-  AND a.name = 'cmf_artifacts/3b75a834-611b-11ef-9f7e-a4bf0103caf6/dataslice/training_0.5:880227273ac75a7ae2341239c67134cd';
+  AND a.name = 'cmf_artifacts/3b75a834-611b-11ef-9f7e-a4bf0103caf6/dataslice/training_0.5:880227273ac75a7ae2341239c67134cd';```
+Description of SQL Query: This query retrieves a specific artifact that represents a dataslice. To identify dataslices, the `artifact` table is joined with the `type` table using the `type_id` column. The query filters for rows where the type name is `Dataslice` and the artifact’s `name` column exactly matches the given path (`cmf_artifacts/.../training_0.5:880227273ac75a7ae2341239c67134cd`).
+Note: There is no explicit foreign key defined, but the following tables are related to each other:
+The `artifact.type_id` column is related to the `type.id` column.
 
-NLP Question: Display all artifacts created on 09 Sep 2025.
-Description of SQL Query: This query retrieves all artifacts that were created on September 9, 2025. The creation time of an artifact is stored in the column `create_time_since_epoch` as a Unix timestamp in milliseconds. To compare it with a specific date, the timestamp is first converted from milliseconds to seconds (`/ 1000`), then cast to a proper timestamp using `TO_TIMESTAMP`. Finally, it is formatted into the `YYYY-MM-DD` format with `TO_CHAR` and checked against the target date `'2025-09-09'`.
-SQL:
-SELECT a.*
+User Question: Display all artifacts created on 09 Sep 2025.
+Expected SQL:
+```SELECT a.*
 FROM artifact a
-WHERE TO_CHAR(TO_TIMESTAMP(a.create_time_since_epoch / 1000), 'YYYY-MM-DD') = '2025-09-09';
+WHERE TO_CHAR(TO_TIMESTAMP(a.create_time_since_epoch / 1000), 'YYYY-MM-DD') = '2025-09-09';```
+Description of SQL Query: This query retrieves all artifacts that were created on September 9, 2025. The creation time of an artifact is stored in the column `create_time_since_epoch` as a Unix timestamp in milliseconds. To compare it with a specific date, the timestamp is first converted from milliseconds to seconds (`/ 1000`), then cast to a proper timestamp using `TO_TIMESTAMP`. Finally, it is formatted into the `YYYY-MM-DD` format with `TO_CHAR` and checked against the target date `'2025-09-09'`.
+Note: In this query, only the `artifact` table is used, so there are no relationships with other tables.
 
-NLP Question: Display all executions containing output classes `['BBQH', 'QH', 'WPQH']`.
-Description of SQL Query: This query retrieves all executions where the metadata property `output_classes` exactly matches the list `['BBQH', 'QH', 'WPQH']`. The property values for executions are stored in the `executionproperty` table, with the `name` column indicating the property type and the `string_value` column holding the property value. The query joins the `execution` table with `executionproperty` on the execution ID and filters for rows where the property name is `output_classes` and the string value equals the specified list.
-SQL:
-SELECT e.*
+User Question: Display all executions containing output classes `['BBQH', 'QH', 'WPQH']`.
+Expected SQL:
+```SELECT e.*
 FROM execution e
 JOIN executionproperty ep 
      ON e.id = ep.execution_id
 WHERE ep.name = 'output_classes'
-  AND ep.string_value = '[''BBQH'', ''QH'', ''WPQH'']';
+  AND ep.string_value = '[''BBQH'', ''QH'', ''WPQH'']';```
+Description of SQL Query: This query retrieves all executions where the metadata property `output_classes` exactly matches the list `['BBQH', 'QH', 'WPQH']`. The property values for executions are stored in the `executionproperty` table, with the `name` column indicating the property type and the `string_value` column holding the property value. The query joins the `execution` table with `executionproperty` on the execution ID and filters for rows where the property name is `output_classes` and the string value equals the specified list.
+Note: There is no explicit foreign key defined, but the following tables are related to each other:
+The `executionproperty.execution_id` column is related to the `execution.id` column.
 
-NLP Question: Display all executions using fewer than 40 training files.
-Description of SQL Query: This query retrieves all executions where the number of training files used is fewer than 40. The information about training files is stored in the `executionproperty` table under the property name `training_files`. Since the files are stored as a comma-separated string in the `string_value` column, the query calculates the count of files by measuring the number of commas and adding 1. If this calculated count is less than 40, the execution is returned.
-SQL:
-SELECT e.*
+User Question: Display all executions using fewer than 40 training files.
+Expected SQL:
+```SELECT e.*
 FROM execution e
 JOIN executionproperty ep
      ON e.id = ep.execution_id
 WHERE ep.name = 'training_files'
   AND (
         LENGTH(ep.string_value) - LENGTH(REPLACE(ep.string_value, ',', '')) + 1
-      ) < 40;
+      ) < 40;```
+Description of SQL Query: This query retrieves all executions where the number of training files used is fewer than 40. The information about training files is stored in the `executionproperty` table under the property name `training_files`. Since the files are stored as a comma-separated string in the `string_value` column, the query calculates the count of files by measuring the number of commas and adding 1. If this calculated count is less than 40, the execution is returned.
+Note: There is no explicit foreign key defined, but the following tables are related to each other:
+The `executionproperty.execution_id` column is related to the `execution.id` column.
 
